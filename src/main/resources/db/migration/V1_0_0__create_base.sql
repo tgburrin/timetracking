@@ -27,7 +27,7 @@ create extension if not exists btree_gist;
 create table if not exists timekeeping.usergroups (
     created timestamptz not null default clock_timestamp(),
     updated timestamptz not null default clock_timestamp(),
-    id bigserial not null primary key,
+    ug_id bigserial not null primary key,
     name text not null,
     type char(1) not null default 'U',
     status char(1) not null default 'A',
@@ -43,7 +43,7 @@ ON timekeeping.usergroups
 FOR EACH ROW
 EXECUTE PROCEDURE timekeeping.set_timestatmps_trg();
 
-insert into timekeeping.usergroups (id, name, type, group_id)
+insert into timekeeping.usergroups (ug_id, name, type, group_id)
 values
     (1, 'admins', 'G', 0)
     on conflict do nothing
@@ -68,10 +68,15 @@ EXECUTE PROCEDURE timekeeping.set_timestatmps_trg();
 create table if not exists timekeeping.task_assignments (
     created timestamptz not null default clock_timestamp(),
     updated timestamptz not null default clock_timestamp(),
-    task_id bigserial not null primary key,
-    external_id text not null,
-    external_status text not null,
-    status char(1) not null default 'O' -- O = Open
+    task_id bigint not null,
+    user_id bigint not null,
+    primary key (user_id, task_id),
+    constraint fk_user
+        foreign key (user_id)
+            references timekeeping.usergroups(ug_id),
+    constraint fk_task
+        foreign key (task_id)
+            references timekeeping.tasks(task_id)
 );
 
 DROP TRIGGER IF EXISTS FF_task_assignments_timestamps on timekeeping.task_assignments;
@@ -89,7 +94,7 @@ create table if not exists timekeeping.task_time_instances (
     task_time tstzrange not null,
     constraint fk_user
         foreign key (user_id)
-            references timekeeping.usergroups(id),
+            references timekeeping.usergroups(ug_id),
     constraint fk_task
         foreign key (task_id)
             references timekeeping.tasks(task_id),
