@@ -9,8 +9,9 @@ public class SpringBootSwaggerConfig {
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group("springshop-public")
-                .pathsToMatch("/public/**")
+                .group("public")
+                .pathsToMatch("/api/v1/**")
+                .packagesToScan("net.tgburrin.timekeeping")
                 .build();
     }
     /*

@@ -9,7 +9,7 @@ import org.springframework.transaction.TransactionManager;
 
 import javax.sql.DataSource;
 
-class ApplicationConfig extends AbstractJdbcConfiguration {
+class JdbcConfig extends AbstractJdbcConfiguration {
     @Bean
     NamedParameterJdbcOperations namedParameterJdbcOperations(DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);

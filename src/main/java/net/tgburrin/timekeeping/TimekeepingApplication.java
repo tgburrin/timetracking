@@ -1,5 +1,7 @@
 package net.tgburrin.timekeeping;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +19,9 @@ import java.util.Date;
 import java.util.TimeZone;
 
 @SpringBootApplication
+@OpenAPIDefinition(info =
+@Info(title = "Timekeeping API", version = "${springdoc.version}", description = "Documentation Timekeeping API v1.0")
+)
 public class TimekeepingApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
