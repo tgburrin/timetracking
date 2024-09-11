@@ -1,4 +1,5 @@
 create schema if not exists timekeeping;
+create extension if not exists btree_gist;
 
 CREATE OR REPLACE FUNCTION timekeeping.set_timestatmps_trg()
     RETURNS TRIGGER
@@ -22,7 +23,29 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
-create extension if not exists btree_gist;
+
+create table if not exists timekeeping.permissions (
+    created timestamptz not null default clock_timestamp(),
+    updated timestamptz not null default clock_timestamp(),
+    permission_id bigserial not null primary key,
+    code text not null,
+    description text not null,
+    constraint uq_perm_code unique(code)
+);
+
+DROP TRIGGER IF EXISTS FF_permission_timestamps on timekeeping.permissions;
+CREATE TRIGGER FF_permission_timestamps
+    BEFORE INSERT OR UPDATE OR DELETE
+    ON timekeeping.permissions
+    FOR EACH ROW
+EXECUTE PROCEDURE timekeeping.set_timestatmps_trg();
+
+insert into timekeeping.permissions(code, description)
+values
+('ADMIN', 'ability to do anything in the system'),
+('EDIT_TIME', 'the ability to edit task times of your own'),
+('MANAGE_TIME', 'the ability to edit task times of others')
+on conflict do nothing;
 
 create table if not exists timekeeping.usergroups (
     created timestamptz not null default clock_timestamp(),
@@ -34,7 +57,7 @@ create table if not exists timekeeping.usergroups (
     group_id bigint not null
 );
 
-create index if not exists ug_user_name on timekeeping.usergroups (name, type);
+create unique index if not exists ug_user_name on timekeeping.usergroups (name, type);
 
 DROP TRIGGER IF EXISTS FF_usergroups_timestamps on timekeeping.usergroups;
 CREATE TRIGGER FF_usergroups_timestamps
@@ -49,6 +72,31 @@ values
     on conflict do nothing
 ;
 
+create table if not exists timekeeping.permission_grant (
+    created timestamptz not null default clock_timestamp(),
+    group_id bigint not null,
+    permission_id bigint not null,
+    primary key (group_id, permission_id),
+    constraint fk_group foreign key (group_id)
+        references timekeeping.usergroups(ug_id),
+    constraint fk_permission foreign key (permission_id)
+        references timekeeping.usergroups(ug_id)
+);
+
+insert into timekeeping.permission_grant (group_id, permission_id)
+select
+    ug.ug_id,
+    p.permission_id
+from
+    timekeeping.usergroups ug,
+    timekeeping.permissions p
+where
+    ug.name = 'admins' and
+    ug.type = 'G' and
+    p.code = 'ADMIN'
+on conflict  do nothing
+;
+
 create table if not exists timekeeping.tasks (
     created timestamptz not null default clock_timestamp(),
     updated timestamptz not null default clock_timestamp(),
@@ -57,6 +105,8 @@ create table if not exists timekeeping.tasks (
     external_status text not null,
     status char(1) not null default 'O' -- O = Open
 );
+
+create unique index uq_external_task on timekeeping.tasks (task_id);
 
 DROP TRIGGER IF EXISTS FF_tasks_timestamps on timekeeping.tasks;
 CREATE TRIGGER FF_tasks_timestamps
@@ -98,7 +148,8 @@ create table if not exists timekeeping.task_time_instances (
     constraint fk_task
         foreign key (task_id)
             references timekeeping.tasks(task_id),
-    exclude using gist ( task_id with =, task_time with && )
+    constraint uq_task_user_time
+        exclude using gist ( task_id with =, task_time with && )
 );
 
 DROP TRIGGER IF EXISTS FF_task_time_instances_timestamps on timekeeping.task_time_instances;
