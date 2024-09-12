@@ -66,9 +66,9 @@ ON timekeeping.usergroups
 FOR EACH ROW
 EXECUTE PROCEDURE timekeeping.set_timestatmps_trg();
 
-insert into timekeeping.usergroups (ug_id, name, type, group_id)
+insert into timekeeping.usergroups (name, type, group_id)
 values
-    (1, 'admins', 'G', 0)
+    ('admins', 'G', 0)
     on conflict do nothing
 ;
 
@@ -139,6 +139,7 @@ EXECUTE PROCEDURE timekeeping.set_timestatmps_trg();
 create table if not exists timekeeping.task_time_instances (
     created timestamptz not null default clock_timestamp(),
     updated timestamptz not null default clock_timestamp(),
+    id uuid not null primary key,
     task_id bigint not null,
     user_id bigint not null,
     task_time tstzrange not null,
@@ -149,7 +150,7 @@ create table if not exists timekeeping.task_time_instances (
         foreign key (task_id)
             references timekeeping.tasks(task_id),
     constraint uq_task_user_time
-        exclude using gist ( task_id with =, task_time with && )
+        exclude using gist ( user_id with = , task_id with =, task_time with && )
 );
 
 DROP TRIGGER IF EXISTS FF_task_time_instances_timestamps on timekeeping.task_time_instances;
@@ -158,3 +159,4 @@ CREATE TRIGGER FF_task_time_instances_timestamps
     ON timekeeping.task_time_instances
     FOR EACH ROW
 EXECUTE PROCEDURE timekeeping.set_timestatmps_trg();
+
