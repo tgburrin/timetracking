@@ -23,6 +23,7 @@ import java.util.TimeZone;
 @Info(title = "Timekeeping API", version = "${springdoc.version}", description = "Documentation Timekeeping API v1.0")
 )
 public class TimekeepingApplication implements CommandLineRunner {
+	public static final String dbSchema = "timekeeping";
 
 	public static void main(String[] args) {
 		SpringApplication.run(TimekeepingApplication.class, args);

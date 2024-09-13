@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(value = "timekeeping.usergroups")
+@Table(value = "usergroups")
 public abstract class UserGroup {
     @Id
     @Column("ug_id")
