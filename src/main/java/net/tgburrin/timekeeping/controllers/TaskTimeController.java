@@ -1,16 +1,14 @@
 package net.tgburrin.timekeeping.controllers;
 
 import net.tgburrin.timekeeping.InvalidRecordException;
-import net.tgburrin.timekeeping.Tasks.Task;
+import net.tgburrin.timekeeping.Tasks.TaskStartReq;
+import net.tgburrin.timekeeping.Tasks.TaskStopReq;
 import net.tgburrin.timekeeping.Tasks.TaskTime;
-import net.tgburrin.timekeeping.UserGroups.Group;
 import net.tgburrin.timekeeping.services.TaskTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,6 +16,21 @@ import java.util.UUID;
 public class TaskTimeController {
     @Autowired
     TaskTimeService tsService;
+
+    @PostMapping(value="/start_tasks/", consumes = "application/json", produces = "application/json")
+    public List<TaskTime> startTasks(@RequestBody TaskStartReq req) {
+        return tsService.startTasks(req.userId, req.taskIds);
+    }
+
+    @PostMapping(value="/stop_tasks/", consumes = "application/json", produces = "application/json")
+    public List<TaskTime> stopTasks(@RequestBody TaskStopReq req) {
+        return tsService.stopTasks(req.taskTimeIds);
+    }
+
+    @RequestMapping(value="/read/user/{id}", method= RequestMethod.GET)
+    public List<TaskTime> findUserActiveTasks(@PathVariable("id") Long id) {
+        return tsService.findAllActiveUserTasks(id);
+    }
 
     @RequestMapping(value="/read/id/{id}", method= RequestMethod.GET)
     public TaskTime findTaskTime(@PathVariable("id") UUID id) throws Exception {

@@ -14,6 +14,7 @@ import java.util.UUID;
 @Table(name = "task_time_instances")
 public class TaskTime {
     @Id
+    @JsonProperty("task_time_id")
     private UUID id;
     @Column("user_id")
     @JsonProperty("user_id")
@@ -23,8 +24,10 @@ public class TaskTime {
     private Long taskId;
 
     @Column("start_dt")
+    @JsonProperty("start_dt")
     private Instant startDt;
     @Column("end_dt")
+    @JsonProperty("end_dt")
     private Instant endDt;
 
 
