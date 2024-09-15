@@ -1,7 +1,6 @@
 package net.tgburrin.timekeeping.controllers;
 
 import net.tgburrin.timekeeping.InvalidRecordException;
-import net.tgburrin.timekeeping.NoRecordFoundException;
 import net.tgburrin.timekeeping.UserGroups.Group;
 import net.tgburrin.timekeeping.services.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;

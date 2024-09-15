@@ -18,7 +18,8 @@ public class TaskTimeController {
     TaskTimeService tsService;
 
     @PostMapping(value="/start_tasks/", consumes = "application/json", produces = "application/json")
-    public List<TaskTime> startTasks(@RequestBody TaskStartReq req) {
+    public List<TaskTime> startTasks(@RequestHeader("request-user") Integer requestUserId,
+                                     @RequestBody TaskStartReq req) {
         return tsService.startTasks(req.userId, req.taskIds);
     }
 
