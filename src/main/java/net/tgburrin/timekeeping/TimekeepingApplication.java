@@ -11,20 +11,27 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.PostConstruct;
 import net.tgburrin.timekeeping.services.AuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
 
 @SpringBootApplication(exclude = {
 		SecurityAutoConfiguration.class,
-		UserDetailsServiceAutoConfiguration.class
+		UserDetailsServiceAutoConfiguration.class,
+		ManagementWebSecurityAutoConfiguration.class,
 })
 @OpenAPIDefinition(
 		info = @Info(
 				title = "Timekeeping API",
-				version = "${springdoc.version}",
 				description = "Documentation Timekeeping API v1.0"
 		),
 		security = { @SecurityRequirement(name = AuthenticationService.AUTH_TOKEN_HEADER_NAME) }
@@ -35,7 +42,8 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 		in = SecuritySchemeIn.HEADER
 )
 public class TimekeepingApplication implements CommandLineRunner {
-	public static final String dbSchema = "timekeeping";
+	@Autowired
+	private ApplicationContext ctx;
 
 	public static void main(String[] args) {
 		SpringApplication.run(TimekeepingApplication.class, args);
@@ -43,7 +51,9 @@ public class TimekeepingApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println("Application running...");
-		System.out.println(("API token is "+ AuthenticationService.getAuthToken()));
+		System.out.println("API Token is "+AuthenticationService.getAuthToken());
+		LettuceConnectionFactory lcf = ctx.getBean("redisConnectionFactory", LettuceConnectionFactory.class);
+		System.out.println("Redis pass is "+lcf.getPassword());
 	}
 	@PostConstruct
 	public void init() {

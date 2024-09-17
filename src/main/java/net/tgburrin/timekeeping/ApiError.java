@@ -1,7 +1,10 @@
 package net.tgburrin.timekeeping;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,22 +12,30 @@ import java.util.List;
 https://www.baeldung.com/global-error-handler-in-a-spring-rest-api
  */
 public class ApiError {
+    @JsonProperty("timestamp")
+    private final Instant currentTime;
+    private final String message;
+    @JsonProperty("exception_name")
+    private final String exceptionName;
 
-    private HttpStatus status;
-    private String message;
-    private List<String> errors;
+    @JsonProperty("exception_class")
+    private final String exceptinoClass;
+    @JsonProperty("exception_method")
+    private final String exceptionMethod;
 
-    public ApiError(HttpStatus status, String message, List<String> errors) {
-        super();
-        this.status = status;
-        this.message = message;
-        this.errors = errors;
+    public ApiError(String m, String exName, String exClass, String exMethod) {
+        currentTime = Instant.now();
+        exceptionName = exName;
+        exceptinoClass = exClass;
+        exceptionMethod = exMethod;
+        message = m;
     }
 
-    public ApiError(HttpStatus status, String message, String error) {
-        super();
-        this.status = status;
-        this.message = message;
-        errors = Arrays.asList(error);
+    public String getMessage() {
+        return message;
+    }
+
+    public String getCurrentTime() {
+        return currentTime.toString();
     }
 }

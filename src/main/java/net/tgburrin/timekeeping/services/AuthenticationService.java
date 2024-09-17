@@ -1,13 +1,9 @@
 package net.tgburrin.timekeeping.services;
 
 import jakarta.servlet.http.HttpServletRequest;
+import net.tgburrin.timekeeping.InvalidApiTokenException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
-
-import net.tgburrin.timekeeping.AuthPermission.SpringAuthentication;
 
 @Component
 public class AuthenticationService {
@@ -28,11 +24,11 @@ public class AuthenticationService {
         return AUTH_TOKEN.equals(inToken);
     }
 
-    public static Authentication getApiAuthentication(HttpServletRequest request) {
+    public static boolean getApiAuthentication(HttpServletRequest request) {
         String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
-        if (apiKey == null || !AUTH_TOKEN.equals(apiKey))
-            throw new BadCredentialsException("Invalid API Key");
+        if (!AUTH_TOKEN.equals(apiKey))
+            throw new InvalidApiTokenException("Invalid API Key");
 
-        return new SpringAuthentication(apiKey, AuthorityUtils.NO_AUTHORITIES);
+        return true;
     }
 }

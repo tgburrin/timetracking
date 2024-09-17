@@ -17,13 +17,13 @@ public class TaskTimeController {
     @Autowired
     TaskTimeService tsService;
 
-    @PostMapping(value="/start_tasks/", consumes = "application/json", produces = "application/json")
+    @PostMapping(value="/maintain/start_tasks/", consumes = "application/json", produces = "application/json")
     public List<TaskTime> startTasks(@RequestHeader("request-user") Integer requestUserId,
                                      @RequestBody TaskStartReq req) {
         return tsService.startTasks(req.userId, req.taskIds);
     }
 
-    @PostMapping(value="/stop_tasks/", consumes = "application/json", produces = "application/json")
+    @PostMapping(value="/maintain/stop_tasks/", consumes = "application/json", produces = "application/json")
     public List<TaskTime> stopTasks(@RequestBody TaskStopReq req) {
         return tsService.stopTasks(req.taskTimeIds);
     }
