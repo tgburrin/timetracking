@@ -31,7 +31,6 @@ public class GroupController {
 
     @RequestMapping(value="/read/list", method=RequestMethod.GET)
     public List<Group> listGroups() throws Exception {
-
         return ugService.findAllGroups();
     }
 

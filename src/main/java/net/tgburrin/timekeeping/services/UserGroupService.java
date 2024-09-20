@@ -3,7 +3,9 @@ package net.tgburrin.timekeeping.services;
 import net.tgburrin.timekeeping.InvalidDataException;
 import net.tgburrin.timekeeping.NoRecordFoundException;
 import net.tgburrin.timekeeping.UserGroups.Group;
+import net.tgburrin.timekeeping.UserGroups.User;
 import net.tgburrin.timekeeping.repositories.GroupRepository;
+import net.tgburrin.timekeeping.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ import java.util.Optional;
 public class UserGroupService {
     @Autowired
     private GroupRepository groupRepo;
+
+    @Autowired
+    private UserRepository userRepo;
 
     public Group findGroupById(Long id) {
         Optional<Group> fg = groupRepo.findById(id);
@@ -38,5 +43,9 @@ public class UserGroupService {
         g.validateRecord();
         groupRepo.save(g);
         return groupRepo.findById(g.readId()).orElse(null);
+    }
+
+    public User findUserByName(String userName) {
+        return userRepo.findByName(userName).orElse(null);
     }
 }
