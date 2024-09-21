@@ -1,37 +1,27 @@
 package net.tgburrin.timekeeping.UserGroups;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import java.time.Instant;
 
-@Table(value = "usergroups")
+import net.tgburrin.timekeeping.InvalidDataException;
+
 public abstract class UserGroup {
-    @Id
-    @Column("ug_id")
-    @JsonProperty("id")
-    protected Long id;
+    private Instant created;
+    private Instant updated;
 
     protected String name;
-    protected Character type;
     protected Character status;
-    @Column("group_id")
-    @JsonProperty("group_id")
-    protected Long groupId;
-
-    public UserGroup() {}
-    public UserGroup(Character t) {
-        type = t;
-        status = 'A';
-    }
-    public UserGroup (String n, Character t) {
+    public UserGroup() {status = 'A';}
+    public UserGroup (String n) {
         name = n;
-        type = t;
         status = 'A';
     }
 
-    public Long getId () {
-        return id;
+    public Instant getCreated() {
+        return created;
+    }
+
+    public Instant getUpdated() {
+        return updated;
     }
 
     public String getName() {
@@ -40,5 +30,10 @@ public abstract class UserGroup {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void validateRecord() throws InvalidDataException {
+        if(this.name == null || this.name.equals(""))
+            throw new InvalidDataException("A valid name must be specified");
     }
 }

@@ -12,6 +12,9 @@ import java.util.UUID;
 
 @Table(name = "task_time_instances")
 public class TaskTime {
+    private Instant created;
+    private Instant updated;
+
     @Id
     @JsonProperty("task_time_id")
     private UUID id;
@@ -30,8 +33,14 @@ public class TaskTime {
     private Instant endDt;
 
 
-    public TaskTime() {
-        this.id = UUID.randomUUID();
+    public TaskTime() {}
+
+    public Instant getCreated() {
+        return created;
+    }
+
+    public Instant getUpdated() {
+        return updated;
     }
 
     public UUID getId() {
@@ -77,7 +86,7 @@ public class TaskTime {
     @Override
     public String toString() {
         List<String> s = new ArrayList<String>();
-        s.add("Id: "+this.id.toString());
+        s.add("Id: "+(this.id == null ? "" : this.id.toString()));
         s.add("userId: "+this.userId);
         s.add("taskId: "+this.taskId);
         s.add("lowerTime: "+this.startDt.toString());
