@@ -13,12 +13,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupRepository extends CrudRepository<Group, Long> {
     @Override
-    @Query("select * from timekeeping.usergroups where type='G' and ug_id=:id")
+    @Query("select * from timekeeping.groups where group_id=:id")
     Optional<Group> findById(@Param("id") Long groupId);
 
-    @Query("select * from timekeeping.usergroups where type='G' and status = 'A'")
+    @Query("select * from timekeeping.groups where status = 'A'")
     List<Group> findAllActive();
 
-    @Query("insert into timekeeping.usergroups (name,type,group_id) values (:name, 'G', :groupId)")
+    @Query("insert into timekeeping.groups (name,group_id) values (:name, :groupId)")
     Group addGroup(@Param("name") String name, @Param("groupId") Long groupId );
 }
