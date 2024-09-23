@@ -5,7 +5,7 @@ import net.tgburrin.timekeeping.InvalidRecordException;
 import net.tgburrin.timekeeping.Tasks.TaskStartReq;
 import net.tgburrin.timekeeping.Tasks.TaskStopReq;
 import net.tgburrin.timekeeping.Tasks.TaskTime;
-import net.tgburrin.timekeeping.services.TaskTimeService;
+import net.tgburrin.timekeeping.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequestMapping("/${apiPrefix}/${apiVersion}/task_time")
 public class TaskTimeController {
     @Autowired
-    TaskTimeService tsService;
+    TaskService tsService;
 
     @PostMapping(value="/maintain/start_tasks/", consumes = "application/json", produces = "application/json")
     public List<TaskTime> startTasks(HttpSession s, @RequestBody TaskStartReq req) {
@@ -25,12 +25,7 @@ public class TaskTimeController {
 
     @PostMapping(value="/maintain/stop_tasks/", consumes = "application/json", produces = "application/json")
     public List<TaskTime> stopTasks(HttpSession s, @RequestBody TaskStopReq req) {
-        return tsService.stopTasks(req.taskTimeIds);
-    }
-
-    @RequestMapping(value="/read/user/{id}", method= RequestMethod.GET)
-    public List<TaskTime> findUserActiveTasks(HttpSession s, @PathVariable("id") Long id) {
-        return tsService.findAllActiveUserTasks(id);
+        return tsService.stopTasks(req.userId, req.taskIds);
     }
 
     @RequestMapping(value="/read/id/{id}", method= RequestMethod.GET)
@@ -39,5 +34,15 @@ public class TaskTimeController {
         if(t == null)
             throw new InvalidRecordException("Task time id "+id.toString()  +" could not be found");
         return t;
+    }
+
+    @RequestMapping(value="/list/by_user/{id}", method= RequestMethod.GET)
+    public List<TaskTime> findUserActiveTasks(HttpSession s, @PathVariable("id") Long id) {
+        return tsService.findAllActiveUserTasks(id);
+    }
+
+    @RequestMapping(value="/list/tasks/active", method= RequestMethod.GET)
+    public List<TaskTime> findActiveTasks(HttpSession s, @RequestParam(value = "user_id", required = false) Long userId) throws Exception {
+        return userId == null ? tsService.findAllActiveTasks() : tsService.findAllActiveUserTasks(userId);
     }
 }

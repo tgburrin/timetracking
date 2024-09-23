@@ -29,7 +29,7 @@ public class GroupController {
         return ugService.updateGroup(group);
     }
 
-    @RequestMapping(value="/read/list", method=RequestMethod.GET)
+    @RequestMapping(value="/list", method=RequestMethod.GET)
     public List<Group> listGroups() throws Exception {
         return ugService.findAllGroups();
     }

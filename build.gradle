@@ -1,5 +1,5 @@
 /*
-https://start.spring.io/#!type=gradle-project&language=java&platformVersion=3.3.3&packaging=jar&jvmVersion=17&groupId=net.tgburrin&artifactId=timekeeping&name=timekeeping&description=time%20keeping%20app&packageName=net.tgburrin.timekeeping&dependencies=web,data-rest,postgresql,jdbc,flyway,security,data-jdbc,data-ldap,session,actuator
+https://start.spring.io/#!type=gradle-project&language=java&platformVersion=3.3.4&packaging=jar&jvmVersion=17&groupId=net.tgburrin&artifactId=timekeeping&name=timekeeping&description=time%20keeping%20app&packageName=net.tgburrin.timekeeping&dependencies=web,postgresql,jdbc,flyway,security,data-jdbc,data-ldap,session,actuator,data-redis,kafka,batch
 */
 
 plugins {
@@ -28,17 +28,22 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-data-ldap'
-	// implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
+	implementation 'org.springframework.kafka:spring-kafka'
+	// implementation 'org.springframework.session:spring-session-jdbc'
 	implementation 'org.springframework.session:spring-session-data-redis'
 	implementation group: 'io.lettuce', name: 'lettuce-core', version: '6.4.0.RELEASE'
-	// implementation 'org.springframework.session:spring-session-jdbc'
+	// implementation 'org.postgresql:postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.batch:spring-batch-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

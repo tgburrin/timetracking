@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class TaskStopReq {
-    @JsonProperty("task_time_ids")
-    public List<UUID> taskTimeIds;
+    @JsonProperty("user_id")
+    public Long userId;
+    @JsonProperty("task_ids")
+    public List<Long> taskIds;
 }

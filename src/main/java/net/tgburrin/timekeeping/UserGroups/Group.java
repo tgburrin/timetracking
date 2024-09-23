@@ -4,35 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.tgburrin.timekeeping.InvalidDataException;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "usergroups")
+@Table(name = "groups")
 public class Group extends UserGroup {
+    @Id
     @Column("group_id")
-    @JsonIgnore
+    @JsonProperty("group_id")
     protected Long groupId;
 
+    @Column("parent_group_id")
+    @JsonIgnore
+    protected Long parentGroupId;
+
     public Group() {
-        super('G');
-        this.groupId = 0L;
+        super();
+        this.parentGroupId = 0L;
     }
     public Group(String name) {
-        super(name, 'G');
-        this.id = null;
-        this.groupId = 0L;
+        super(name);
+        this.groupId = null;
+        this.parentGroupId = 0L;
     }
 
     public Group(Long id, String name) {
-        this.id = id;
+        this.groupId = id;
         this.name = name;
-        this.type = 'G';
-        this.groupId = 0L;
+        this.parentGroupId = 0L;
     }
 
-    public long readId() {
-        return this.id;
+    public long getGroupId() {
+        return this.groupId;
     }
 
     public String getName() {
@@ -45,16 +51,12 @@ public class Group extends UserGroup {
     @Override
     public String toString() {
         List<String> s = new ArrayList<String>();
-        s.add("Id: "+this.id);
+        s.add("GroupId: "+this.groupId);
         s.add("Name: "+this.name);
-        s.add("Type: "+this.type);
         s.add("Status: "+this.status);
+        s.add("ParentGroupId: "+this.parentGroupId);
 
         return String.join("\n", s);
     }
 
-    public void validateRecord() throws InvalidDataException {
-        if(this.name == null || this.name.equals(""))
-            throw new InvalidDataException("A valid group name must be specified");
-    }
 }

@@ -32,20 +32,22 @@ public class UserGroupService {
     public Group createGroup(Group ng) throws InvalidDataException {
         Group g = new Group(ng.getName());
         g.validateRecord();
-        groupRepo.save(g);
-        return g;
+        return groupRepo.save(g);
+
     }
 
     public Group updateGroup(Group g) throws InvalidDataException, NoRecordFoundException {
-        Optional<Group> ng = groupRepo.findById(g.readId());
+        Optional<Group> ng = groupRepo.findById(g.getGroupId());
         if ( ng.isEmpty() )
-            throw new NoRecordFoundException("Group Id "+g.readId()+" could not be found");
+            throw new NoRecordFoundException("Group Id "+g.getGroupId()+" could not be found");
         g.validateRecord();
-        groupRepo.save(g);
-        return groupRepo.findById(g.readId()).orElse(null);
+        return groupRepo.save(g);
     }
 
     public User findUserByName(String userName) {
         return userRepo.findByName(userName).orElse(null);
+    }
+    public List<User> listUsers() {
+        return userRepo.listUsers();
     }
 }
