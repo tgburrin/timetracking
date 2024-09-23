@@ -1,9 +1,8 @@
-package net.tgburrin.timekeeping.UserGroups;
+package net.tgburrin.timekeeping.usergroups;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CreateUserReq {
-    public String name;
+public class CreateGroupReq {
     @JsonProperty("group_name")
     public String groupName;
 }

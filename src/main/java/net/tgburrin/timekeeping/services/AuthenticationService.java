@@ -1,7 +1,7 @@
 package net.tgburrin.timekeeping.services;
 
 import jakarta.servlet.http.HttpServletRequest;
-import net.tgburrin.timekeeping.InvalidApiTokenException;
+import net.tgburrin.timekeeping.exceptions.InvalidApiTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

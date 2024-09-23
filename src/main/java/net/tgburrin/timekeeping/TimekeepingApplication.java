@@ -1,8 +1,5 @@
 package net.tgburrin.timekeeping;
 
-import java.util.Date;
-import java.util.TimeZone;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -19,16 +16,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
+import java.util.Date;
+import java.util.TimeZone;
 
 
 @SpringBootApplication(exclude = {
 		SecurityAutoConfiguration.class,
 		UserDetailsServiceAutoConfiguration.class,
-		ManagementWebSecurityAutoConfiguration.class,
-})
+		ManagementWebSecurityAutoConfiguration.class
+	}
+)
 @OpenAPIDefinition(
 		info = @Info(
 				title = "Timekeeping API",
@@ -41,6 +41,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 		name = AuthenticationService.AUTH_TOKEN_HEADER_NAME,
 		in = SecuritySchemeIn.HEADER
 )
+@EnableJdbcRepositories
 public class TimekeepingApplication implements CommandLineRunner {
 	@Autowired
 	private ApplicationContext ctx;

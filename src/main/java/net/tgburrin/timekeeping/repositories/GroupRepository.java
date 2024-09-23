@@ -1,24 +1,25 @@
 package net.tgburrin.timekeeping.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
+import net.tgburrin.timekeeping.usergroups.Group;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
-
-import net.tgburrin.timekeeping.UserGroups.Group;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
-public interface GroupRepository extends CrudRepository<Group, Long> {
-    @Override
-    @Query("select * from timekeeping.groups where group_id=:id")
-    Optional<Group> findById(@Param("id") Long groupId);
+public interface GroupRepository extends CrudRepository<Group, Long>, SharedRepositoryInt<Group, Long> {
+    @Query("select * from timekeeping.groups where name=:name")
+    Optional<Group> findByName(@Param("name") String groupName);
+
+    @Query("select count(*) = 1 from timekeeping.groups where name=:name")
+    Boolean testNameExists(@Param("name") String groupName);
 
     @Query("select * from timekeeping.groups where status = 'A'")
     List<Group> findAllActive();
 
-    @Query("insert into timekeeping.groups (name,group_id) values (:name, :groupId)")
-    Group addGroup(@Param("name") String name, @Param("groupId") Long groupId );
+    @Query("insert into timekeeping.groups (name) values (:name) returning *")
+    Group addGroup(@Param("name") String name);
 }

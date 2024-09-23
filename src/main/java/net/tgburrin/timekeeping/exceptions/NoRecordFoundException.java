@@ -1,4 +1,4 @@
-package net.tgburrin.timekeeping;
+package net.tgburrin.timekeeping.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

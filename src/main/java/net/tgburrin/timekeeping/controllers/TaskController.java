@@ -1,14 +1,16 @@
 package net.tgburrin.timekeeping.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import net.tgburrin.timekeeping.InvalidDataException;
-import net.tgburrin.timekeeping.Tasks.Task;
-import net.tgburrin.timekeeping.Tasks.TaskCreateReq;
+import net.tgburrin.timekeeping.exceptions.InternalErrorException;
+import net.tgburrin.timekeeping.exceptions.InvalidDataException;
+import net.tgburrin.timekeeping.tasks.Task;
+import net.tgburrin.timekeeping.tasks.TaskCreateReq;
 import net.tgburrin.timekeeping.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLDataException;
 import java.util.List;
 
 @RestController
@@ -31,6 +33,8 @@ public class TaskController {
             return tsService.createTask(nt);
         } catch (JsonProcessingException e) {
             throw new InvalidDataException(e.getMessage());
+        } catch (SQLDataException e) {
+            throw new InternalErrorException(e.getMessage());
         }
     }
 }

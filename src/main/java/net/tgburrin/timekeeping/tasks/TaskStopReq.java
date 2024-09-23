@@ -1,9 +1,8 @@
-package net.tgburrin.timekeeping.Tasks;
+package net.tgburrin.timekeeping.tasks;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-import java.util.UUID;
 
 public class TaskStopReq {
     @JsonProperty("user_id")

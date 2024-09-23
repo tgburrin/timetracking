@@ -1,11 +1,10 @@
-package net.tgburrin.timekeeping.UserGroups;
+package net.tgburrin.timekeeping.usergroups;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.tgburrin.timekeeping.InvalidDataException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -15,37 +14,34 @@ public class Group extends UserGroup {
     @Id
     @Column("group_id")
     @JsonProperty("group_id")
-    protected Long groupId;
+    private Long groupId = null;
 
     @Column("parent_group_id")
     @JsonIgnore
-    protected Long parentGroupId;
+    private Long parentGroupId = 0L;
 
     public Group() {
         super();
-        this.parentGroupId = 0L;
-    }
-    public Group(String name) {
-        super(name);
-        this.groupId = null;
-        this.parentGroupId = 0L;
     }
 
-    public Group(Long id, String name) {
-        this.groupId = id;
-        this.name = name;
-        this.parentGroupId = 0L;
+    public Group(CreateGroupReq c) {
+        super(c.groupName);
     }
 
-    public long getGroupId() {
+    public Long getGroupId() {
         return this.groupId;
     }
 
-    public String getName() {
-        return this.name;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
-    public void setName(String n) {
-        this.name = n;
+
+    public Long getParentGroupId() {
+        return parentGroupId;
+    }
+    public void setParentGroupId(Long gid) {this.parentGroupId = gid;}
+    public void setParentGroup(Group parentGroup) {
+        this.parentGroupId = parentGroup.getGroupId();
     }
 
     @Override
