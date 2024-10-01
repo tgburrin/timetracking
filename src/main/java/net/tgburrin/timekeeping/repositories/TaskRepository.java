@@ -2,16 +2,13 @@ package net.tgburrin.timekeeping.repositories;
 
 import java.util.List;
 
-import net.tgburrin.timekeeping.Tasks.Task;
+import net.tgburrin.timekeeping.tasks.Task;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public interface TaskRepository extends CrudRepository<Task, Long>  {
+public interface TaskRepository extends CrudRepository<Task, Long>, SharedRepositoryInt<Task, Long>  {
     @Query("select * from timekeeping.tasks t where t.status = 'O' order by created")
     List<Task> findOpenTasks();
 

@@ -1,4 +1,4 @@
-package net.tgburrin.timekeeping.UserGroups;
+package net.tgburrin.timekeeping.usergroups;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

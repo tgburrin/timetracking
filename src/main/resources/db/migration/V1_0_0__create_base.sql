@@ -1,7 +1,7 @@
 -- drop schema flyway_metadata cascade; drop schema timekeeping cascade;
 create schema if not exists timekeeping;
-create extension if not exists btree_gist;
-create extension if not exists "uuid-ossp";
+create extension if not exists btree_gist with SCHEMA public;
+create extension if not exists "uuid-ossp" with SCHEMA public;
 
 CREATE OR REPLACE FUNCTION timekeeping.set_timestatmps_trg()
 RETURNS TRIGGER
@@ -11,7 +11,7 @@ BEGIN
     IF TG_WHEN = 'BEFORE' and TG_OP in ('INSERT', 'UPDATE') THEN
         NEW.updated := clock_timestamp();
         IF TG_OP = 'INSERT' THEN
-            NEW.created := clock_timestamp();
+            NEW.created := NEW.updated;
         END IF;
         RETURN NEW;
     ELSIF TG_WHEN = 'BEFORE' and TG_OP in ('DELETE') THEN
@@ -61,6 +61,7 @@ create table if not exists timekeeping.users (
     updated timestamptz not null default clock_timestamp(),
     user_id bigserial not null primary key,
     name text not null,
+    password_data text not null,
     status char(1) not null default 'A',
     group_id bigint not null
 );
@@ -197,6 +198,8 @@ create table if not exists timekeeping.task_time_instances (
     task_id bigint not null,
     user_id bigint not null,
     task_time tstzrange not null,
+    start_dt timestamptz generated always as (lower(task_time)) STORED,
+    end_dt timestamptz generated always as (nullif(upper(task_time), 'Infinity')) STORED,
     constraint fk_user
         foreign key (user_id)
             references timekeeping.users(user_id),
@@ -235,18 +238,18 @@ LANGUAGE plpgsql
 as $$
 BEGIN
     RETURN QUERY
-    update timekeeping.task_time_instances set
+    update timekeeping.task_time_instances as tti set
         task_time = tstzrange(sd, ed, '[)')
     where
         id = ttid
     returning
-        created,
-        updated,
-        id,
-        task_id,
-        user_id,
-        lower(task_time),
-        nullif(upper(task_time), 'Infinity')
+        tti.created,
+        tti.updated,
+        tti.id,
+        tti.task_id,
+        tti.user_id,
+        tti.start_dt,
+        tti.end_dt
     ;
 END;
 $$
@@ -266,7 +269,7 @@ LANGUAGE plpgsql
 as $$
 BEGIN
     RETURN QUERY
-    insert into timekeeping.task_time_instances (id, user_id, task_id, task_time)
+    insert into timekeeping.task_time_instances as tti (id, user_id, task_id, task_time)
     select
         public.uuid_generate_v4(),
         uid,
@@ -274,13 +277,13 @@ BEGIN
         tstzrange(now(), 'Infinity', '[)')
     from unnest(tids) as t
     returning
-        created,
-        updated,
-        id,
-        task_id,
-        user_id,
-        lower(task_time),
-        nullif(upper(task_time), 'Infinity')
+        tti.created,
+        tti.updated,
+        tti.id,
+        tti.task_id,
+        tti.user_id,
+        tti.start_dt,
+        tti.end_dt
     ;
 END;
 $$
@@ -300,19 +303,19 @@ LANGUAGE plpgsql
 as $$
 BEGIN
     RETURN QUERY
-    update timekeeping.task_time_instances set
-        task_time = tstzrange(lower(task_time), now(), '[)')
+    update timekeeping.task_time_instances as tti set
+        task_time = tstzrange(lower(tti.task_time), now(), '[)')
     where
-        user_id = uid and
-        task_id = ANY(tids)
+        tti.user_id = uid and
+        tti.task_id = ANY(tids)
     returning
-        created,
-        updated,
-        id,
-        task_id,
-        user_id,
-        lower(task_time),
-        nullif(upper(task_time), 'Infinity')
+        tti.created,
+        tti.updated,
+        tti.id,
+        tti.task_id,
+        tti.user_id,
+        tti.start_dt,
+        tti.end_dt
     ;
 END;
 $$
@@ -416,8 +419,9 @@ END;
 $$
 ;
 
-insert into timekeeping.users (name,group_id)
-values ('tgburrin',1), ('baburrin', 1);
+insert into timekeeping.users (name, password_data, group_id)
+values ('tgburrin', '8f0e2f76e22b43e2855189877e7dc1e1e7d98c226c95db247cd1d547928334a9', 1),
+       ('baburrin', '8f0e2f76e22b43e2855189877e7dc1e1e7d98c226c95db247cd1d547928334a9', 1);
 
 insert into timekeeping.tasks (external_id, external_status, external_description)
 values ('tsk001','open', 'stock shelves'), ('tsk002','open', 'bake bread'),

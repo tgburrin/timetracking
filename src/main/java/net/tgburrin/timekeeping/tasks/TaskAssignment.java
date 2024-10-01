@@ -1,4 +1,4 @@
-package net.tgburrin.timekeeping.Tasks;
+package net.tgburrin.timekeeping.tasks;
 
 import java.time.Instant;
 

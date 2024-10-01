@@ -1,7 +1,7 @@
-package net.tgburrin.timekeeping.Tasks;
+package net.tgburrin.timekeeping.tasks;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.tgburrin.timekeeping.InvalidDataException;
+import net.tgburrin.timekeeping.exceptions.InvalidDataException;
 
 import java.util.ArrayList;
 import java.util.List;

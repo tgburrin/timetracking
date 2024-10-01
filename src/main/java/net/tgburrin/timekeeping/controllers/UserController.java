@@ -1,11 +1,10 @@
 package net.tgburrin.timekeeping.controllers;
 
 import jakarta.servlet.http.HttpSession;
-import net.tgburrin.timekeeping.InvalidDataException;
-import net.tgburrin.timekeeping.InvalidRecordException;
-import net.tgburrin.timekeeping.UserGroups.Group;
-import net.tgburrin.timekeeping.UserGroups.User;
-import net.tgburrin.timekeeping.UserGroups.LoginSessionResp;
+import net.tgburrin.timekeeping.exceptions.InvalidDataException;
+import net.tgburrin.timekeeping.exceptions.InvalidRecordException;
+import net.tgburrin.timekeeping.usergroups.User;
+import net.tgburrin.timekeeping.usergroups.LoginSessionResp;
 import net.tgburrin.timekeeping.services.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

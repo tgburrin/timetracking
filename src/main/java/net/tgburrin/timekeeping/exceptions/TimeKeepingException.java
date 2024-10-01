@@ -1,4 +1,4 @@
-package net.tgburrin.timekeeping;
+package net.tgburrin.timekeeping.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;

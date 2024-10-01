@@ -1,13 +1,18 @@
 package net.tgburrin.timekeeping.controllers;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import net.tgburrin.timekeeping.authpermission.LoginReq;
+import net.tgburrin.timekeeping.authpermission.LoginResp;
+import net.tgburrin.timekeeping.services.UserGroupService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/${apiPrefix}/${apiVersion}/session")
 public class SessionController {
+
+    @Autowired
+    UserGroupService ugService;
 
     // Create a session and store an attribute
     /*
@@ -44,4 +49,18 @@ public class SessionController {
         session.invalidate();
         return "Session invalidated!";
     }
+
+    @PostMapping(value="/password_hash", consumes = "application/json", produces = "application/json")
+    public String generatePasswordHash(@RequestBody String passwordIn) {
+        return UserGroupService.hashPassword(passwordIn);
+    }
+
+    @PostMapping(value="/login", consumes = "application/json", produces = "application/json")
+    public LoginResp checkPassw0rd(HttpSession session, @RequestBody LoginReq req) {
+        LoginResp rv = ugService.loginUser(req);
+        session.setAttribute("user_id", rv.user.getUserId().toString());
+        rv.sessionId = session.getId();
+        return rv;
+    }
+
 }

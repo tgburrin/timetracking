@@ -1,10 +1,8 @@
-package net.tgburrin.timekeeping.Tasks;
+package net.tgburrin.timekeeping.tasks;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import net.tgburrin.timekeeping.InvalidDataException;
+import net.tgburrin.timekeeping.exceptions.InvalidDataException;
 
 import java.util.ArrayList;
 

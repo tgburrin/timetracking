@@ -1,6 +1,7 @@
-package net.tgburrin.timekeeping.Tasks;
+package net.tgburrin.timekeeping.tasks;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.tgburrin.timekeeping.exceptions.InvalidDataException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -35,12 +36,26 @@ public class TaskTime {
 
     public TaskTime() {}
 
+    public TaskTime(TaskTimeCreateReq newTaskTime) {
+        this.userId = newTaskTime.userId;
+        this.taskId = newTaskTime.taskId;
+        this.startDt = newTaskTime.startDt;
+        this.endDt = newTaskTime.endDt;
+    }
+
     public Instant getCreated() {
         return created;
+    }
+    public void setCreated(Instant created) {
+        this.created = created;
     }
 
     public Instant getUpdated() {
         return updated;
+    }
+
+    public void setUpdated(Instant updated) {
+        this.updated = updated;
     }
 
     public UUID getId() {
@@ -93,5 +108,14 @@ public class TaskTime {
         s.add("upperTime: "+(this.endDt == null ? "" : this.endDt.toString()));
 
         return String.join("\n", s);
+    }
+
+    public void validate() {
+        if ( this.userId == null )
+            throw new InvalidDataException("A user id is required");
+        if ( this.taskId == null )
+            throw new InvalidDataException("A task id is required");
+        if ( this.startDt != null && this.endDt != null && !this.startDt.isBefore(this.endDt))
+            throw new InvalidDataException("Start datetime must be before end datetime if provided");
     }
 }
